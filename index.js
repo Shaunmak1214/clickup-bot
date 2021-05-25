@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 require('dotenv').config()
 
+const { user } = require('./controllers/index')
 const { prefix, BaseAPI, db } = require('./config');
 const { help, send } = require('./commands')
 
@@ -33,8 +34,57 @@ app.get('/', function(req, res) {
     res.send('This is clickup-bot');
 });
 
-app.get('/authorize', function(req, res) {
-    res.send('This is clickup-bot, authorization route');
+app.get('/auth/redirect', function(req, res) {
+
+    var discord_user_id = req.query.discord_user_id
+    var cookie = req.cookies.discord_user_id;
+    res.cookie('discord_user_id',discord_user_id, { maxAge: 900000, httpOnly: true });
+
+    res.writeHead(301,{
+        Location: 'https://app.clickup.com/api?client_id=TSIQ5VNPQYG3ZUMHVPOJIO7GXVT6JDX7&redirect_uri=https://click-up-bot.herokuapp.com/auth/callback'
+    });
+
+    res.end();
+})
+
+app.get('/auth/callback', async function(req, res) {
+
+    let status = null;
+    let discord_user_id = parseCookies( req.headers.cookie ).discord_user_id;
+
+    if(req.query.code){
+        let access_token = axios.post(`${BaseAPI}oauth/token?client_id=${process.env.CLICKUP_CLIENTID}&client_secret=${process.env.CLICKUP_CLIENTSECRET}&code=${req.query.code}`)
+            .then((res) => {
+                return res.data.access_token
+            })
+            .catch((err) => {
+                return null;
+            })
+
+        let tokenSaved = await user.createUser(discord_user_id, access_token)
+            .then((res) => {
+                res.clearCookie('discord_user_id')
+                if(res === 1){
+                    return 'User is already registered'
+                }else if(res){
+                    return 'Account Registered'
+                }else if(!res){
+                    return 'Account Not Registered'
+                }
+            })
+            .catch((err) => {
+                console.log(err)
+                return null;
+            })
+
+        if(access_token && tokenSaved){
+            res.send('callback', { access_token: `${access_token}`, token_saved: tokenSaved });
+        }
+        
+    }else{
+        status = "No Code Available"
+    }
+
 });
 
 app.use((req, res, next) => {
@@ -64,7 +114,10 @@ client.on('message', async message => {
     if(message.content.startsWith(`${prefix}help`)){
         help(message)
     }else if(message.content.startsWith(`${prefix}tasks`)){
-
+        
+    }else if(message.content.startsWith(`${prefix}login`)){
+        let text = `Welcome to the login lobby. Kindly navigate to this link to get yourself authenticated [https://click-up-bot.herokuapp.com/auth/redirect?discord_user_id=${message.author.id}]`
+        send.sendToPrivate(client, message.author.id, text)
     }
 });
 
