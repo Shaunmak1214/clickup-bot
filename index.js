@@ -30,7 +30,11 @@ app.use(bodyParser.json())
 app.use(cookieParser());
 
 app.get('/', function(req, res) {
-    res.render('This is clickup-bot');
+    res.send('This is clickup-bot');
+});
+
+app.get('/authorize', function(req, res) {
+    res.send('This is clickup-bot, authorization route');
 });
 
 app.use((req, res, next) => {
@@ -60,8 +64,7 @@ client.on('message', async message => {
     if(message.content.startsWith(`${prefix}help`)){
         help(message)
     }else if(message.content.startsWith(`${prefix}tasks`)){
-        let text = "Checking"
-        send.sendToChannel(message, text)
+
     }
 });
 
