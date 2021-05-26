@@ -78,7 +78,7 @@ app.get('/auth/callback', async function(req, res) {
 
         if(access_token && tokenSaved){
             res.clearCookie('discord_user_id')
-            res.send('callback', { access_token: `${access_token}`, token_saved: tokenSaved });
+            res.status(200).send('callback', { access_token: `${access_token}`, token_saved: tokenSaved });
         }
         
     }else{
