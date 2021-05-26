@@ -39,7 +39,7 @@ app.get('/auth/redirect', function(req, res) {
         }) */
 
     res.writeHead(301,{
-        Location: `https://app.clickup.com/api?client_id=${process.env.CLICKUP_CLIENTID}&redirect_uri=https://click-up-bot.herokuapp.com/auth/callback`
+        Location: `https://app.clickup.com/api?client_id=${process.env.CLICKUP_CLIENTID}&redirect_uri=https://clickup-task-bot.herokuapp.com/auth/callback`
     });
 
     res.end();
