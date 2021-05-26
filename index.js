@@ -52,7 +52,6 @@ app.get('/auth/redirect', function(req, res) {
         Location: `https://app.clickup.com/api?client_id=${process.env.CLICKUP_CLIENTID}&redirect_uri=https://clickup-task-bot.herokuapp.com/auth/callback`
     });
 
-    res.end();
 })
 
 app.get('/auth/callback', async function(req, res) {
