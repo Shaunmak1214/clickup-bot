@@ -51,13 +51,13 @@ app.get('/auth/redirect', function(req, res) {
     var discord_user_id = req.query.discord_user_id
     console.log(`This is from query ${discord_user_id}`)
     var cookie = req.cookies.discord_user_id;
-    res.cookie('discord_user_id',discord_user_id, { maxAge: 900000, httpOnly: true });
+    res.cookie('discord_user_id',discord_user_id, { maxAge: 900000 });
 
-    /* res.writeHead(301,{
+    res.writeHead(301,{
         Location: `https://app.clickup.com/api?client_id=${process.env.CLICKUP_CLIENTID}&redirect_uri=https://click-up-bot.herokuapp.com/auth/callback`
     });
 
-    res.end(); */
+    res.end();
 })
 
 app.get('/auth/callback', async function(req, res) {
