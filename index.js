@@ -6,29 +6,12 @@ const cookieParser = require('cookie-parser');
 require('dotenv').config()
 
 const { user } = require('./controllers/index')
-const { prefix, BaseAPI, db } = require('./config');
+const { prefix, BaseAPI } = require('./config');
+const { dbActions } = require('./actions')
 const { help, send } = require('./commands')
 
-// Database Authentication
-db.sync({ alter:true })
-.then((synched) => {
-    console.log(`${synched} All models were synchronized successfully.`)
-})
-.catch((err) => {
-    console.log(err)
-})
-
-db.authenticate()
-    .then(() => console.log('Database connected...'))
-    .catch(err => console.log('Error: ' + err))
-
-function parseCookies(str) {
-    let rx = /([^;=\s]*)=([^;]*)/g;
-    let obj = { };
-    for ( let m ; m = rx.exec(str) ; )
-        obj[ m[1] ] = decodeURIComponent( m[2] );
-    return obj;
-}
+// Initiate Database Actions (Authenctication and Synching)
+dbActions.run();
 
 let app = express();
 
@@ -48,10 +31,16 @@ app.get('/', function(req, res) {
 app.get('/auth/redirect', function(req, res) {
 
     console.log(req.query.discord_user_id)
-    var discord_user_id = req.query.discord_user_id
+/*     var discord_user_id = req.query.discord_user_id
     console.log(`This is from query ${discord_user_id}`)
     var cookie = req.cookies.discord_user_id;
-    res.cookie('discord_user_id',discord_user_id, { maxAge: 900000, httpOnly: true });
+    res.cookie('discord_user_id',discord_user_id, { maxAge: 900000, httpOnly: true }); */
+
+    res
+        .writeHead(200, {
+            "Set-Cookie": `discord_user_id=${req.query.discord_user_id}; HttpOnly`,
+            "Access-Control-Allow-Credentials": "true"
+        })
 
     res.writeHead(301,{
         Location: `https://app.clickup.com/api?client_id=${process.env.CLICKUP_CLIENTID}&redirect_uri=https://click-up-bot.herokuapp.com/auth/callback`
@@ -64,6 +53,7 @@ app.get('/auth/callback', async function(req, res) {
 
     let status = null;
     let discord_user_id = req.cookies['discord_user_id'];
+    console.log(req.cookies.discord_user_id)
     console.log(`Discord User Id: ${discord_user_id}`)
 
     if(req.query.code){
