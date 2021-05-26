@@ -22,7 +22,7 @@ app.use(bodyParser.json())
 app.use(cookieParser());
 
 /* ============================= Routes to ejs templating  ============================= */
-app.use(express.static( "/public" ));
+app.use(express.static( "public" ));
 
 app.get('/auth/redirect', function(req, res) {
 
