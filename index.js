@@ -79,7 +79,7 @@ app.get('/auth/callback', async function(req, res) {
 
         let tokenSaved = await user.createUser(discord_user_id, access_token)
             .then((res) => {
-                res.clearCookie('discord_user_id')
+                res.clearCookie('discord_user_id', {path:'/'})
                 if(res === 1){
                     return 'User is already registered'
                 }else if(res){
@@ -89,6 +89,7 @@ app.get('/auth/callback', async function(req, res) {
                 }
             })
             .catch((err) => {
+                res.clearCookie('discord_user_id', {path:'/'})
                 console.log(err)
                 return null;
             })
