@@ -49,7 +49,7 @@ app.get('/auth/redirect', function(req, res) {
     res.cookie('discord_user_id',discord_user_id, { maxAge: 900000, httpOnly: true });
 
     res.writeHead(301,{
-        Location: 'https://app.clickup.com/api?client_id=TSIQ5VNPQYG3ZUMHVPOJIO7GXVT6JDX7&redirect_uri=https://click-up-bot.herokuapp.com/auth/callback'
+        Location: `https://app.clickup.com/api?client_id=${process.env.CLICKUP_CLIENTID}&redirect_uri=https://click-up-bot.herokuapp.com/auth/callback`
     });
 
     res.end();
@@ -66,14 +66,14 @@ app.get('/auth/callback', async function(req, res) {
 
         let access_token = axios.post(`${BaseAPI}oauth/token?client_id=${process.env.CLICKUP_CLIENTID}&client_secret=${process.env.CLICKUP_CLIENTSECRET}&code=${req.query.code}`)
             .then((res) => {
-                console.log(res.data)
-                console.log(res.data.access_token)
                 return res.data.access_token
             })
             .catch((err) => {
                 console.log(err)
                 return null;
             })
+
+        console.log(access_token)
 
         let tokenSaved = await user.createUser(discord_user_id, access_token)
             .then((res) => {

@@ -1,6 +1,9 @@
 const User = require('../models/user.model');
 
 const createUser = async(discord_user_id, access_token) => {
+
+    console.log(access_token)
+
     const userExisted = await User.findAll({
         where: {
             discord_user_id: `${discord_user_id}`
