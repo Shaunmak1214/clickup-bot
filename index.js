@@ -61,8 +61,12 @@ app.get('/auth/callback', async function(req, res) {
     let discord_user_id = parseCookies( req.headers.cookie ).discord_user_id;
 
     if(req.query.code){
+
+        console.log(`${BaseAPI}oauth/token?client_id=${process.env.CLICKUP_CLIENTID}&client_secret=${process.env.CLICKUP_CLIENTSECRET}&code=${req.query.code}`)
+
         let access_token = axios.post(`${BaseAPI}oauth/token?client_id=${process.env.CLICKUP_CLIENTID}&client_secret=${process.env.CLICKUP_CLIENTSECRET}&code=${req.query.code}`)
             .then((res) => {
+                console.log(res.data)
                 console.log(res.data.access_token)
                 return res.data.access_token
             })
