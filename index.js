@@ -39,7 +39,7 @@ app.use(bodyParser.json())
 app.use(cookieParser());
 
 /* ============================= Routes to ejs templating  ============================= */
-app.use( express.static( "public" ) );
+app.use(express.static( "/public" ));
 
 app.get('/', function(req, res) {
     res.send('This is clickup-bot');
@@ -51,7 +51,7 @@ app.get('/auth/redirect', function(req, res) {
     var discord_user_id = req.query.discord_user_id
     console.log(`This is from query ${discord_user_id}`)
     var cookie = req.cookies.discord_user_id;
-    res.cookie('discord_user_id',discord_user_id, { maxAge: 900000 });
+    res.cookie('discord_user_id',discord_user_id, { maxAge: 900000, httpOnly: true });
 
     res.writeHead(301,{
         Location: `https://app.clickup.com/api?client_id=${process.env.CLICKUP_CLIENTID}&redirect_uri=https://click-up-bot.herokuapp.com/auth/callback`
