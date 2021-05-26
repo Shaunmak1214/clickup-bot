@@ -38,6 +38,9 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json())
 app.use(cookieParser());
 
+/* ============================= Routes to ejs templating  ============================= */
+app.use( express.static( "public" ) );
+
 app.get('/', function(req, res) {
     res.send('This is clickup-bot');
 });
@@ -45,6 +48,7 @@ app.get('/', function(req, res) {
 app.get('/auth/redirect', function(req, res) {
 
     var discord_user_id = req.query.discord_user_id
+    console.log(`This is from query ${discord_user_id}`)
     var cookie = req.cookies.discord_user_id;
     res.cookie('discord_user_id',discord_user_id, { maxAge: 900000, httpOnly: true });
 
@@ -62,8 +66,6 @@ app.get('/auth/callback', async function(req, res) {
     console.log(`Discord User Id: ${discord_user_id}`)
 
     if(req.query.code){
-
-        console.log(`${BaseAPI}oauth/token?client_id=${process.env.CLICKUP_CLIENTID}&client_secret=${process.env.CLICKUP_CLIENTSECRET}&code=${req.query.code}`)
 
         let access_token = await axios.post(`${BaseAPI}oauth/token?client_id=${process.env.CLICKUP_CLIENTID}&client_secret=${process.env.CLICKUP_CLIENTSECRET}&code=${req.query.code}`)
             .then((res) => {
