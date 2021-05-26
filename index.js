@@ -28,6 +28,7 @@ app.use(function (req, res, next){
     if(req.query.discord_user_id === undefined){
         res.cookie('discord_user_id','Not Set', { maxAge: 900000, httpOnly: true });
         console.log('Not Set cookie created successfully');
+        console.log(`After ${req.query.discord_user_id}`)
     }else{
         res.cookie('discord_user_id',req.query.discord_user_id, { maxAge: 900000, httpOnly: true });
         console.log('cookie created successfully');
