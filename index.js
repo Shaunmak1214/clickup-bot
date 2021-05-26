@@ -132,8 +132,20 @@ client.on('message', async message => {
     }else if(message.content.startsWith(`${prefix}tasks`)){
         
     }else if(message.content.startsWith(`${prefix}login`)){
-        let text = `Welcome to the login lobby. Kindly navigate to this link to get yourself authenticated [https://click-up-bot.herokuapp.com/auth/redirect?discord_user_id=${message.author.id}]`
-        send.sendToPrivate(client, message.author.id, text)
+        const embed = new Discord.MessageEmbed()
+            .setColor('#ff6a00')
+            .setTitle('Welcome to the Login Lobby | Powered by ClickUp-Bot')
+            .setAuthor('ClickUp-Bot', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
+            .setDescription('This is the authentication guide to bring your tasks management experience to the MOON')
+            .setThumbnail('https://i.imgur.com/wSTFkRM.png')
+            .addFields(
+                { name: 'Login with this link: ', value: `https://click-up-bot.herokuapp.com/auth/redirect?discord_user_id=${message.author.id}` },
+                { name: '\u200B', value: '\u200B' },
+            )
+            .setImage('https://i.imgur.com/wSTFkRM.png')
+            .setTimestamp()
+
+        send.sendToPrivate(client, message.author.id, embed)
     }
 });
 
