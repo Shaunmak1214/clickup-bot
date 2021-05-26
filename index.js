@@ -24,10 +24,6 @@ app.use(cookieParser());
 /* ============================= Routes to ejs templating  ============================= */
 app.use(express.static( "/public" ));
 
-app.get('/', function(req, res) {
-    res.send('This is clickup-bot');
-});
-
 app.get('/auth/redirect', function(req, res) {
 
     console.log(req.query.discord_user_id)
@@ -92,6 +88,10 @@ app.get('/auth/callback', async function(req, res) {
         status = "No Code Available"
     }
 
+});
+
+app.get('/', function(req, res) {
+    res.send('This is clickup-bot');
 });
 
 app.use((req, res, next) => {
