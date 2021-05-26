@@ -64,7 +64,7 @@ app.get('/auth/callback', async function(req, res) {
 
         console.log(`${BaseAPI}oauth/token?client_id=${process.env.CLICKUP_CLIENTID}&client_secret=${process.env.CLICKUP_CLIENTSECRET}&code=${req.query.code}`)
 
-        let access_token = axios.post(`${BaseAPI}oauth/token?client_id=${process.env.CLICKUP_CLIENTID}&client_secret=${process.env.CLICKUP_CLIENTSECRET}&code=${req.query.code}`)
+        let access_token = await axios.post(`${BaseAPI}oauth/token?client_id=${process.env.CLICKUP_CLIENTID}&client_secret=${process.env.CLICKUP_CLIENTSECRET}&code=${req.query.code}`)
             .then((res) => {
                 return res.data.access_token
             })
@@ -72,8 +72,6 @@ app.get('/auth/callback', async function(req, res) {
                 console.log(err)
                 return null;
             })
-
-        console.log(access_token)
 
         let tokenSaved = await user.createUser(discord_user_id, access_token)
             .then((res) => {
