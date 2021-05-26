@@ -130,7 +130,7 @@ client.on('message', async message => {
             .setDescription('This is the authentication guide to bring your tasks management experience to the MOON')
             .addFields(
                 { name: '\u200B', value: '\u200B' },
-                { name: 'Login with this link: ', value: `http://click-up-bot.herokuapp.com/auth/redirect?discord_user_id=${message.author.id}` },
+                { name: 'Login with this link: ', value: `http://clickup-task-bot.herokuapp.com/auth/redirect?discord_user_id=${message.author.id}` },
                 { name: '\u200B', value: '\u200B' },
             )
             .setTimestamp()
