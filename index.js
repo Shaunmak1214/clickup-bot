@@ -28,9 +28,7 @@ app.get('/auth/redirect', function(req, res) {
 
     console.log(req.query.discord_user_id)
     var discord_user_id = req.query.discord_user_id
-    console.log(`This is from query ${discord_user_id}`)
-    var cookie = req.cookies.discord_user_id;
-    res.cookie('discord_user_id',discord_user_id, { maxAge: 900000, httpOnly: true });
+    res.cookie('discord_user_id', `${discord_user_id}`, { maxAge: 900000, httpOnly: true });
 
 /*     res
         .writeHead(200, {
