@@ -47,6 +47,7 @@ app.get('/', function(req, res) {
 
 app.get('/auth/redirect', function(req, res) {
 
+    console.log(req.query.discord_user_id)
     var discord_user_id = req.query.discord_user_id
     console.log(`This is from query ${discord_user_id}`)
     var cookie = req.cookies.discord_user_id;
