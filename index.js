@@ -63,7 +63,7 @@ app.get('/auth/redirect', function(req, res) {
 app.get('/auth/callback', async function(req, res) {
 
     let status = null;
-    let discord_user_id = parseCookies( req.headers.cookie ).discord_user_id;
+    let discord_user_id = req.cookies['discord_user_id'];
     console.log(`Discord User Id: ${discord_user_id}`)
 
     if(req.query.code){
