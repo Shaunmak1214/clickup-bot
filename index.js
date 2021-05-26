@@ -67,6 +67,7 @@ app.get('/auth/callback', async function(req, res) {
                 return res.data.access_token
             })
             .catch((err) => {
+                console.log(err)
                 return null;
             })
 
