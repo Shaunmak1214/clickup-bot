@@ -23,7 +23,7 @@ app.use(cookieParser());
 
 /* ============================= Routes to ejs templating  ============================= */
 app.use(express.static( "public" ));
-
+/* 
 app.use(function (req, res, next){
     if(req.query.discord_user_id === undefined){
         res.cookie('discord_user_id','Not Set', { maxAge: 900000, httpOnly: true });
@@ -34,13 +34,13 @@ app.use(function (req, res, next){
         console.log('cookie created successfully');
     }
     next();
-})
+}) */
 
 app.get('/auth/redirect', function(req, res) {
 
-/*     console.log(req.query.discord_user_id)
+    console.log(req.query.discord_user_id)
     var discord_user_id = req.query.discord_user_id
-    res.cookie('discord_user_id', `${discord_user_id}`, { maxAge: 900000, httpOnly: true }); */
+    res.cookie('discord_user_id', `${discord_user_id}`, { maxAge: 900000, httpOnly: true });
 
 /*     res
         .writeHead(200, {
@@ -48,9 +48,7 @@ app.get('/auth/redirect', function(req, res) {
             "Access-Control-Allow-Credentials": "true"
         }) */
 
-    res.writeHead(301,{
-        Location: `https://app.clickup.com/api?client_id=${process.env.CLICKUP_CLIENTID}&redirect_uri=https://clickup-task-bot.herokuapp.com/auth/callback`
-    });
+    res.redirect(`https://app.clickup.com/api?client_id=${process.env.CLICKUP_CLIENTID}&redirect_uri=https://clickup-task-bot.herokuapp.com/auth/callback`)
 
 })
 
