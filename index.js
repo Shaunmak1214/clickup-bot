@@ -24,19 +24,6 @@ app.use(cookieParser());
 /* ============================= Routes to ejs templating  ============================= */
 app.use(express.static( "public" ));
 
-/* 
-app.use(function (req, res, next){
-    if(req.query.discord_user_id === undefined){
-        res.cookie('discord_user_id','Not Set', { maxAge: 900000, httpOnly: true });
-        console.log('Not Set cookie created successfully');
-        console.log(`After ${req.query.discord_user_id}`)
-    }else{
-        res.cookie('discord_user_id',req.query.discord_user_id, { maxAge: 900000, httpOnly: true });
-        console.log('cookie created successfully');
-    }
-    next();
-}) */
-
 app.get('/auth/redirect', function(req, res) {
     var discord_user_id = req.query.discord_user_id
     res.cookie('discord_user_id', `${discord_user_id}`, { maxAge: 900000, httpOnly: true });
@@ -44,8 +31,6 @@ app.get('/auth/redirect', function(req, res) {
 })
 
 app.get('/auth/callback', async function(req, res) {
-
-    let status = null;
     let discord_user_id = req.cookies['discord_user_id'];
     console.log(`Discord User Id: ${discord_user_id}`)
 
@@ -81,7 +66,7 @@ app.get('/auth/callback', async function(req, res) {
         }
         
     }else{
-        status = "No Code Available"
+        res.render('callback', { access_token: `No Code Available`, token_saved: "Not Registered" });
     }
 
 });
