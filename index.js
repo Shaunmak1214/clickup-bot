@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 require('dotenv').config()
 
-const { user } = require('./controllers/index')
+const { user, team } = require('./controllers/index')
 const { prefix, BaseAPI } = require('./config');
 const { dbActions } = require('./actions')
 const { help, send } = require('./commands')
@@ -23,6 +23,7 @@ app.use(cookieParser());
 
 /* ============================= Routes to ejs templating  ============================= */
 app.use(express.static( "public" ));
+
 /* 
 app.use(function (req, res, next){
     if(req.query.discord_user_id === undefined){
@@ -37,26 +38,15 @@ app.use(function (req, res, next){
 }) */
 
 app.get('/auth/redirect', function(req, res) {
-
-    console.log(req.query.discord_user_id)
     var discord_user_id = req.query.discord_user_id
     res.cookie('discord_user_id', `${discord_user_id}`, { maxAge: 900000, httpOnly: true });
-
-/*     res
-        .writeHead(200, {
-            "Set-Cookie": `discord_user_id=${req.query.discord_user_id}; HttpOnly`,
-            "Access-Control-Allow-Credentials": "true"
-        }) */
-
     res.redirect(`https://app.clickup.com/api?client_id=${process.env.CLICKUP_CLIENTID}&redirect_uri=https://clickup-task-bot.herokuapp.com/auth/callback`)
-
 })
 
 app.get('/auth/callback', async function(req, res) {
 
     let status = null;
     let discord_user_id = req.cookies['discord_user_id'];
-    console.log(req.cookies.discord_user_id)
     console.log(`Discord User Id: ${discord_user_id}`)
 
     if(req.query.code){
@@ -127,21 +117,21 @@ client.on('message', async message => {
     if(message.content.startsWith(`${prefix}help`)){
         help(message)
     }else if(message.content.startsWith(`${prefix}tasks`)){
-        
+        let access_token = await user.getAccessTokenViaDiscordId(message.author.id)
+        if(!access_token){
+            send.sendLoginGuidePrivately(client, message.author.id)
+            return;
+        }
+    }else if(message.content.startsWith(`${prefix}teams`)){
+        let access_token = await user.getAccessTokenViaDiscordId(message.author.id)
+        if(!access_token){
+            send.sendLoginGuidePrivately(client, message.author.id)
+            return;
+        }
+        let teams = await team.getTeams(access_token)
+        send.sendTeamsInfoToChannel(message, teams)
     }else if(message.content.startsWith(`${prefix}login`)){
-        const embed = new Discord.MessageEmbed()
-            .setColor('#ff6a00')
-            .setTitle('Welcome to the Login Lobby | Powered by ClickUp-Bot')
-            .setAuthor('ClickUp-Bot', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
-            .setDescription('This is the authentication guide to bring your tasks management experience to the MOON')
-            .addFields(
-                { name: '\u200B', value: '\u200B' },
-                { name: 'Login with this link: ', value: `http://clickup-task-bot.herokuapp.com/auth/redirect?discord_user_id=${message.author.id}` },
-                { name: '\u200B', value: '\u200B' },
-            )
-            .setTimestamp()
-
-        send.sendToPrivate(client, message.author.id, embed)
+        send.sendLoginGuidePrivately(client, message.author.id)
     }
 });
 

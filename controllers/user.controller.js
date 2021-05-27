@@ -1,7 +1,6 @@
 const User = require('../models/user.model');
 
 const createUser = async(discord_user_id, access_token) => {
-
     const userExisted = await User.findAll({
         where: {
             discord_user_id: `${discord_user_id}`
@@ -12,7 +11,6 @@ const createUser = async(discord_user_id, access_token) => {
         return 1;
     }else {
         const newUser = await User.create({ discord_user_id, access_token })
-
         if(newUser) {
             return true
         }else{
