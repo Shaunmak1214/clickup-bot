@@ -1,27 +1,32 @@
 const axios = require('axios');
 const { BaseAPI } = require('../config')
 
-const getTeams = async(access_token) => {
+const getSpaceByTeam = async(access_token, teams) => {
     var config = {
         method: 'get',
-        url: `${BaseAPI}team`,
+        url: `${BaseAPI}team/${teams[0].id}/space?archived=false`,
         headers: { 
             'Authorization': `${access_token}`
         }
     };
-    
-    let teams = await axios(config)
+
+    let spaces = await axios(config)
         .then(function (res) {
-            return res.data.teams //teams array
+            return res.data.spaces //spaces array
         })
         .catch(function (err) {
             console.log(err)
             return null
         });
 
-    return teams
+    return spaces
+}
+
+const getSpaceByTeams = async(access_token, teams) => {
+    
 }
 
 module.exports = {
-    getTeams
+    getSpaceByTeam,
+    getSpaceByTeams
 }

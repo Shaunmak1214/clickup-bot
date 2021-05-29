@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 require('dotenv').config()
 
-const { user, team } = require('./controllers/index')
+const { user, team, space, list } = require('./controllers/index')
 const { prefix, BaseAPI } = require('./config');
 const { dbActions } = require('./actions')
 const { help, send } = require('./commands')
@@ -115,6 +115,25 @@ client.on('message', async message => {
         }
         let teams = await team.getTeams(access_token)
         send.sendTeamsInfoToChannel(message, teams)
+    }else if(message.content.startsWith(`${prefix}spaces`)){
+        let access_token = await user.getAccessTokenViaDiscordId(message.author.id)
+        if(!access_token){
+            send.sendLoginGuidePrivately(client, message.author.id)
+            return;
+        }
+        let teams = await team.getTeams(access_token)
+        let spaces = await space.getSpaceByTeam(access_token, teams)
+        send.sendSpacesInfoToChannel(message, spaces)
+    }else if(message.content.startsWith(`${prefix}lists`)){
+        let access_token = await user.getAccessTokenViaDiscordId(message.author.id)
+        if(!access_token){
+            send.sendLoginGuidePrivately(client, message.author.id)
+            return;
+        }
+        let teams = await team.getTeams(access_token)
+        let spaces = await space.getSpaceByTeam(access_token, teams)
+        let lists = await list.getFolderlessList(access_token, spaces)
+        send.sendListsInfoToChannel(message, lists)
     }else if(message.content.startsWith(`${prefix}login`)){
         send.sendLoginGuidePrivately(client, message.author.id)
     }
