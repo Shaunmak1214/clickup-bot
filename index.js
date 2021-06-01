@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 require('dotenv').config()
 
-const { user, team, space, list } = require('./controllers/index')
+const { user, team, space, list, task } = require('./controllers/index')
 const { prefix, BaseAPI } = require('./config');
 const { dbActions } = require('./actions')
 const { help, send } = require('./commands')
@@ -101,12 +101,6 @@ client.on("ready", () =>{
 client.on('message', async message => {
     if(message.content.startsWith(`${prefix}help`)){
         help(message)
-    }else if(message.content.startsWith(`${prefix}tasks`)){
-        let access_token = await user.getAccessTokenViaDiscordId(message.author.id)
-        if(!access_token){
-            send.sendLoginGuidePrivately(client, message.author.id)
-            return;
-        }
     }else if(message.content.startsWith(`${prefix}teams`)){
         let access_token = await user.getAccessTokenViaDiscordId(message.author.id)
         if(!access_token){
@@ -134,6 +128,17 @@ client.on('message', async message => {
         let spaces = await space.getSpaceByTeam(access_token, teams)
         let lists = await list.getFolderlessList(access_token, spaces)
         send.sendListsInfoToChannel(message, lists)
+    }else if(message.content.startsWith(`${prefix}tasks`)){
+        let access_token = await user.getAccessTokenViaDiscordId(message.author.id)
+        if(!access_token){
+            send.sendLoginGuidePrivately(client, message.author.id)
+            return;
+        }
+        let teams = await team.getTeams(access_token)
+        let spaces = await space.getSpaceByTeam(access_token, teams)
+        let lists = await list.getFolderlessList(access_token, spaces)
+        let tasks = await task.getTasksFromList(access_token, lists)
+        send.sendTasksInfoToChannel(message, tasks)
     }else if(message.content.startsWith(`${prefix}login`)){
         send.sendLoginGuidePrivately(client, message.author.id)
     }
