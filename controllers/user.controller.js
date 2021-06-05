@@ -33,7 +33,39 @@ const getAccessTokenViaDiscordId = async (discord_id) => {
     }
 }
 
+const getAllUser = async() => {
+
+}   
+
+const getAllSubscribedUser = async() => {
+    const subscribedUsers = await User.findAll({
+        where:{
+            subscribed: true
+        }
+    })
+
+    let users = []
+
+    if(subscribedUsers.length > 0){
+        subscribedUsers.forEach(user => {
+            if(user.dataValues.access_token.length > 0){
+                users.push({
+                    user_id: user.dataValues.user_id,
+                    discord_user_id: user.dataValues.discord_user_id,
+                    access_token: user.dataValues.access_token
+                })
+            }else{
+                return;
+            }
+        });
+        return users
+    }else{
+        return null;
+    }
+}
+
 module.exports = {
     createUser,
-    getAccessTokenViaDiscordId
+    getAccessTokenViaDiscordId,
+    getAllSubscribedUser
 }

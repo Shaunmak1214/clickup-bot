@@ -15,6 +15,9 @@ const User = db.define('user', {
     },
     refresh_token: {
         type: Sequelize.STRING,
+    },
+    subscribed: {
+        type: Sequelize.BOOLEAN,
     }
 })
 

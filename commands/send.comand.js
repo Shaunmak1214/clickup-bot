@@ -81,6 +81,33 @@ const sendTasksInfoToChannel = async(channel, tasks) => {
     channel.channel.send(embed)
 }
 
+const sendDailyTasksPrivately = async(client, discord_user_id, tasks) => {
+    const embed = new Discord.MessageEmbed()
+        .setColor(`#ff6a00`)
+        .setTitle(`Daily Tasks for you`)
+        .setAuthor('ClickUp-Bot', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
+        .setDescription(`Lists of your tasks [${tasks.length}]`)
+        .setTimestamp()
+        .setFooter("\u3000".repeat(1000)+"|")
+
+    tasks.forEach(task => {
+        embed.addFields(
+            { name: 'Tasks"s Name:', value: `${task.name}`, inline: true, },
+        )
+    });
+
+    let sent = await client.users.fetch(discord_user_id, false)
+        .then((user) => {
+            user.send(embed);
+            return true;
+        })
+        .catch((err) => {
+            console.log(err)
+        });
+
+    return sent;
+}
+
 const sendToPrivate = async(client, discord_user_id, message) => {
     client.users.fetch(discord_user_id, false).then((user) => {
         user.send(message);
@@ -112,6 +139,7 @@ module.exports = {
     sendSpacesInfoToChannel,
     sendListsInfoToChannel,
     sendTasksInfoToChannel,
+    sendDailyTasksPrivately,
     sendToPrivate,
     sendLoginGuidePrivately
 }

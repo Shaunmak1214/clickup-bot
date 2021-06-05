@@ -75,6 +75,8 @@ app.get('/', function(req, res) {
     res.send('This is clickup-bot');
 });
 
+app.use('/v1', require('./routes/index'));
+
 app.use((req, res, next) => {
     res.status(404).send('We think you are lost!')
 })
