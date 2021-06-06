@@ -101,9 +101,9 @@ client.on("ready", () =>{
 });
 
 client.on('message', async message => {
-    if(message.content.startsWith(`${prefix}help`)){
+    if(message.content.includes(`${prefix}help`)){
         help(message)
-    }else if(message.content.startsWith(`${prefix}teams`)){
+    }else if(message.content.includes(`${prefix}teams`)){
         let access_token = await user.getAccessTokenViaDiscordId(message.author.id)
         if(!access_token){
             send.sendLoginGuidePrivately(client, message.author.id)
@@ -111,7 +111,7 @@ client.on('message', async message => {
         }
         let teams = await team.getTeams(access_token)
         send.sendTeamsInfoToChannel(message, teams)
-    }else if(message.content.startsWith(`${prefix}spaces`)){
+    }else if(message.content.includes(`${prefix}spaces`)){
         let access_token = await user.getAccessTokenViaDiscordId(message.author.id)
         if(!access_token){
             send.sendLoginGuidePrivately(client, message.author.id)
@@ -120,7 +120,7 @@ client.on('message', async message => {
         let teams = await team.getTeams(access_token)
         let spaces = await space.getSpaceByTeam(access_token, teams)
         send.sendSpacesInfoToChannel(message, spaces)
-    }else if(message.content.startsWith(`${prefix}lists`)){
+    }else if(message.content.includes(`${prefix}lists`)){
         let access_token = await user.getAccessTokenViaDiscordId(message.author.id)
         if(!access_token){
             send.sendLoginGuidePrivately(client, message.author.id)
@@ -130,7 +130,7 @@ client.on('message', async message => {
         let spaces = await space.getSpaceByTeam(access_token, teams)
         let lists = await list.getFolderlessList(access_token, spaces)
         send.sendListsInfoToChannel(message, lists)
-    }else if(message.content.startsWith(`${prefix}tasks`)){
+    }else if(message.content.includes(`${prefix}tasks`)){
         let access_token = await user.getAccessTokenViaDiscordId(message.author.id)
         if(!access_token){
             send.sendLoginGuidePrivately(client, message.author.id)
@@ -141,8 +141,14 @@ client.on('message', async message => {
         let lists = await list.getFolderlessList(access_token, spaces)
         let tasks = await task.getTasksFromList(access_token, lists)
         send.sendTasksInfoToChannel(message, tasks)
-    }else if(message.content.startsWith(`${prefix}login`)){
+    }else if(message.content.includes(`${prefix}login`)){
         send.sendLoginGuidePrivately(client, message.author.id)
+    }else if(message.content.includes(`${prefix}subscribe`)){
+        let subscribed = await user.updateSubscribtion(message.author.id, true)
+        let sendMessage = `${message.author.username} is now a subscribed user!`;
+        if(subscribed){
+            send.sendToChannel(message, sendMessage)
+        }
     }
 });
 

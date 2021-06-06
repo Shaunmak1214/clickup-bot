@@ -19,6 +19,26 @@ const createUser = async(discord_user_id, access_token) => {
     }
 }
 
+const updateSubscribtion = async(discord_user_id, subscribe) => {
+    const updated = await User.update(
+        {
+            subscribed: subscribe
+        },
+        {
+            where:{
+                discord_user_id: `${discord_user_id}`
+            }
+        }
+    ).then((res) => {
+        return true
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+
+    return updated
+}
+
 const getAccessTokenViaDiscordId = async (discord_id) => {
     const access_token = await User.findAll({
         where: {
@@ -32,10 +52,6 @@ const getAccessTokenViaDiscordId = async (discord_id) => {
         return null;
     }
 }
-
-const getAllUser = async() => {
-
-}   
 
 const getAllSubscribedUser = async() => {
     const subscribedUsers = await User.findAll({
@@ -66,6 +82,7 @@ const getAllSubscribedUser = async() => {
 
 module.exports = {
     createUser,
+    updateSubscribtion,
     getAccessTokenViaDiscordId,
     getAllSubscribedUser
 }
