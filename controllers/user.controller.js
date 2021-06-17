@@ -59,9 +59,7 @@ const getAllSubscribedUser = async() => {
             subscribed: true
         }
     })
-
     let users = []
-
     if(subscribedUsers.length > 0){
         subscribedUsers.forEach(user => {
             if(user.dataValues.access_token.length > 0){

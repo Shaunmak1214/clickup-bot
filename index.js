@@ -141,6 +141,13 @@ client.on('message', async message => {
         let lists = await list.getFolderlessList(access_token, spaces)
         let tasks = await task.getTasksFromList(access_token, lists)
         send.sendTasksInfoToChannel(message, tasks)
+    }else if(message.content.includes(`${prefix}allLists`)){
+        let access_token = await user.getAccessTokenViaDiscordId(message.author.id)
+        if(!access_token){
+            send.sendLoginGuidePrivately(client, message.author.id)
+            return;
+        }
+        list.getAllAvailableListsFromUser(access_token);
     }else if(message.content.includes(`${prefix}login`)){
         send.sendLoginGuidePrivately(client, message.author.id)
     }else if(message.content.includes(`${prefix}subscribe`)){
